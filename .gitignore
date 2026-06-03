@@ -1,0 +1,9 @@
+.venv/
+.tmp/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+data/processed/
+!data/processed/.gitkeep
+*.tflite
+*.keras

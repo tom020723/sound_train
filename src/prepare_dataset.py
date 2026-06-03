@@ -1,0 +1,76 @@
+from __future__ import annotations
+
+from pathlib import Path
+
+import numpy as np
+from sklearn.model_selection import train_test_split
+
+from src.config import load_config
+from src.features import extract_mfcc, load_audio, split_fixed_clips
+
+
+AUDIO_EXTENSIONS = {".wav", ".mp3", ".flac", ".ogg", ".m4a"}
+
+
+def iter_audio_files(class_dir: Path) -> list[Path]:
+    return sorted(
+        path
+        for path in class_dir.rglob("*")
+        if path.is_file() and path.suffix.lower() in AUDIO_EXTENSIONS
+    )
+
+
+def main() -> None:
+    config = load_config()
+    features: list[np.ndarray] = []
+    labels: list[int] = []
+
+    for label, class_name in enumerate(config.classes):
+        for audio_path in iter_audio_files(config.data_dir / class_name):
+            audio = load_audio(audio_path, config)
+            for clip in split_fixed_clips(audio, config.clip_samples):
+                features.append(extract_mfcc(clip, config))
+                labels.append(label)
+
+    if not features:
+        raise RuntimeError("No audio files found under data/raw.")
+
+    x = np.stack(features)
+    y = np.asarray(labels, dtype=np.int64)
+
+    x_train, x_test, y_train, y_test = train_test_split(
+        x,
+        y,
+        test_size=config.test_size,
+        random_state=config.random_seed,
+        stratify=y,
+    )
+    x_train, x_val, y_train, y_val = train_test_split(
+        x_train,
+        y_train,
+        test_size=config.validation_size,
+        random_state=config.random_seed,
+        stratify=y_train,
+    )
+
+    mean = x_train.mean(axis=(0, 1), keepdims=True)
+    std = x_train.std(axis=(0, 1), keepdims=True)
+
+    config.processed_dir.mkdir(parents=True, exist_ok=True)
+    np.savez_compressed(
+        config.processed_dir / "dataset.npz",
+        x_train=x_train,
+        y_train=y_train,
+        x_val=x_val,
+        y_val=y_val,
+        x_test=x_test,
+        y_test=y_test,
+        mean=mean,
+        std=std,
+        classes=np.asarray(config.classes),
+    )
+    print(f"Saved dataset to {config.processed_dir / 'dataset.npz'}")
+
+
+if __name__ == "__main__":
+    main()
