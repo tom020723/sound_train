@@ -9,6 +9,9 @@ from pathlib import Path
 class Config:
     sample_rate: int
     clip_seconds: float
+    stride_seconds: float
+    min_clip_rms: float
+    balance_train_classes: bool
     n_mfcc: int
     n_fft: int
     hop_length: int
@@ -27,12 +30,19 @@ class Config:
     def clip_samples(self) -> int:
         return int(self.sample_rate * self.clip_seconds)
 
+    @property
+    def stride_samples(self) -> int:
+        return max(1, int(self.sample_rate * self.stride_seconds))
+
 
 def load_config(path: str | Path = "configs/default.json") -> Config:
     raw = json.loads(Path(path).read_text(encoding="utf-8"))
     return Config(
         sample_rate=raw["sample_rate"],
         clip_seconds=raw["clip_seconds"],
+        stride_seconds=raw.get("stride_seconds", raw["clip_seconds"]),
+        min_clip_rms=raw.get("min_clip_rms", 0.0),
+        balance_train_classes=raw.get("balance_train_classes", False),
         n_mfcc=raw["n_mfcc"],
         n_fft=raw["n_fft"],
         hop_length=raw["hop_length"],

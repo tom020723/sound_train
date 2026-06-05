@@ -16,6 +16,9 @@ def test_extract_mfcc_shape() -> None:
     config = Config(
         sample_rate=16000,
         clip_seconds=1.0,
+        stride_seconds=0.5,
+        min_clip_rms=0.0,
+        balance_train_classes=False,
         n_mfcc=13,
         n_fft=512,
         hop_length=160,

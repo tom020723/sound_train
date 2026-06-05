@@ -108,7 +108,7 @@ src/
 
 ```text
 16 kHz mono 오디오
--> 1초 고정 길이 클립
+-> 1초 고정 길이 클립, 0.5초 stride
 -> MFCC 추출
 -> 학습 데이터 기준 mean/std 정규화
 -> TensorFlow Lite int8 양자화
@@ -120,5 +120,10 @@ src/
 
 - sample rate: `16000`
 - clip length: `1초`
+- stride: `0.5초`
+- 최소 RMS: `0.001`
+- train split 클래스 균형화: `true`
 - MFCC 개수: `13`
 - 클래스: `not_rain`, `rain`
+
+`src.data.prepare_dataset`은 먼저 원본 파일 단위로 train/validation/test를 나눈 뒤, 각 split 안에서 클립을 생성합니다. 같은 원본 파일에서 나온 비슷한 클립이 train과 test에 동시에 들어가는 것을 막기 위한 구조입니다.
