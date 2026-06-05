@@ -18,4 +18,6 @@ data/raw/**/*.aiff
 !data/raw/not_rain/.gitkeep
 *.tflite
 *.keras
+models/*
+!models/.gitkeep
 drive/

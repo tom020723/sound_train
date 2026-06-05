@@ -15,7 +15,7 @@ def main() -> None:
 
     x_test = normalize_features(data["x_test"], data["mean"], data["std"])[..., None]
     y_test = data["y_test"]
-    y_pred = model.predict(x_test).argmax(axis=1)
+    y_pred = model.predict(x_test, verbose=0).argmax(axis=1)
 
     print(confusion_matrix(y_test, y_pred))
     print(classification_report(y_test, y_pred, target_names=config.classes))
