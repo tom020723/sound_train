@@ -5,7 +5,7 @@ from pathlib import Path
 import librosa
 import numpy as np
 
-from src.config import Config
+from src.common.config import Config
 
 
 def load_audio(path: str | Path, config: Config) -> np.ndarray:

@@ -30,42 +30,77 @@ $env:TMP = "$PWD\.tmp"
 
 ## 데이터 구조
 
+원본 다운로드 데이터는 `drive/`에 그대로 둡니다. 이 폴더는 git에 올리지 않습니다.
+
+```text
+drive/
+  rain/
+  ambient noise/
+```
+
+학습에 사용할 데이터는 `data/raw/` 아래에 정리된 사본으로 둡니다.
+
 ```text
 data/
   raw/
     rain/
     not_rain/
   processed/
-models/
-src/
 ```
 
-원본 오디오 파일은 아래 위치에 넣습니다.
+현재 매핑은 다음과 같습니다.
 
-- 비 소리: `data/raw/rain`
-- 비가 아닌 소리: `data/raw/not_rain`
+- `drive/rain` -> `data/raw/rain`
+- `drive/ambient noise` -> `data/raw/not_rain`
 
-지원 예정 확장자는 `.wav`, `.mp3`, `.flac`, `.ogg`, `.m4a`입니다.
+정리된 오디오 파일과 `data/raw/manifest.csv`도 git에는 올리지 않습니다. 저장소에는 폴더 구조를 유지하기 위한 `.gitkeep`만 포함합니다.
 
-## 실행 흐름
+## 데이터 정리
+
+`drive/`의 원본 데이터를 `data/raw/`로 복사합니다.
+
+```powershell
+python -m src.data.curate_raw_data --clear
+```
+
+`--clear` 옵션은 기존 `data/raw/rain`, `data/raw/not_rain` 안의 오디오 파일을 지우고 다시 복사합니다. `.gitkeep`은 그대로 둡니다.
+
+지원 확장자는 `.wav`, `.mp3`, `.flac`, `.ogg`, `.m4a`, `.aif`, `.aiff`입니다.
+
+## 학습 흐름
 
 데이터 준비부터 int8 TFLite 변환까지의 기본 흐름입니다.
 
 ```powershell
-python -m src.prepare_dataset
-python -m src.train
-python -m src.evaluate
-python -m src.export_tflite
-python -m src.predict path\to\audio.wav
+python -m src.data.prepare_dataset
+python -m src.training.train
+python -m src.training.evaluate
+python -m src.training.export_tflite
+python -m src.inference.predict path\to\audio.wav
 ```
 
 각 스크립트의 역할은 다음과 같습니다.
 
-- `src.prepare_dataset`: 오디오 파일을 읽고 1초 단위 MFCC 데이터셋 생성
-- `src.train`: MFCC 데이터셋으로 작은 CNN 계열 모델 학습
-- `src.evaluate`: 테스트셋 성능 평가
-- `src.export_tflite`: representative dataset 기반 full int8 TFLite 변환
-- `src.predict`: 새 오디오 파일의 `rain` / `not_rain` 예측
+- `src.data.curate_raw_data`: `drive/` 원본 데이터를 `data/raw/` 학습 구조로 정리
+- `src.data.prepare_dataset`: 오디오 파일을 읽고 1초 단위 MFCC 데이터셋 생성
+- `src.training.train`: MFCC 데이터셋으로 작은 CNN 계열 모델 학습
+- `src.training.evaluate`: 테스트셋 성능 평가
+- `src.training.export_tflite`: representative dataset 기반 full int8 TFLite 변환
+- `src.inference.predict`: 새 오디오 파일의 `rain` / `not_rain` 예측
+
+## 코드 구조
+
+`src/`는 역할별 패키지로 나눕니다.
+
+```text
+src/
+  common/      설정과 공통 유틸리티
+  data/        원본 데이터 정리와 데이터셋 생성
+  features/    MFCC 등 특징 추출 구현
+  models/      모델 아키텍처
+  training/    학습, 평가, TFLite 변환
+  inference/   예측 실행 코드
+```
 
 ## TinyML 메모
 

@@ -1,23 +1,11 @@
 from __future__ import annotations
 
-from pathlib import Path
-
 import numpy as np
 from sklearn.model_selection import train_test_split
 
-from src.config import load_config
-from src.features import extract_mfcc, load_audio, split_fixed_clips
-
-
-AUDIO_EXTENSIONS = {".wav", ".mp3", ".flac", ".ogg", ".m4a"}
-
-
-def iter_audio_files(class_dir: Path) -> list[Path]:
-    return sorted(
-        path
-        for path in class_dir.rglob("*")
-        if path.is_file() and path.suffix.lower() in AUDIO_EXTENSIONS
-    )
+from src.common.config import load_config
+from src.data.audio_files import iter_audio_files
+from src.features.librosa_mfcc import extract_mfcc, load_audio, split_fixed_clips
 
 
 def main() -> None:

@@ -5,5 +5,16 @@ __pycache__/
 .pytest_cache/
 data/processed/
 !data/processed/.gitkeep
+data/raw/manifest.csv
+data/raw/**/*.wav
+data/raw/**/*.mp3
+data/raw/**/*.flac
+data/raw/**/*.ogg
+data/raw/**/*.m4a
+data/raw/**/*.aif
+data/raw/**/*.aiff
+!data/raw/rain/.gitkeep
+!data/raw/not_rain/.gitkeep
 *.tflite
 *.keras
+drive/

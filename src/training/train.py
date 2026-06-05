@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import numpy as np
 
-from src.config import load_config
-from src.features import normalize_features
-from src.model import build_model
+from src.common.config import load_config
+from src.features.librosa_mfcc import normalize_features
+from src.models.cnn import build_model
 
 
 def main() -> None:

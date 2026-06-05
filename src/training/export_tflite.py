@@ -3,8 +3,8 @@ from __future__ import annotations
 import numpy as np
 import tensorflow as tf
 
-from src.config import load_config
-from src.features import normalize_features
+from src.common.config import load_config
+from src.features.librosa_mfcc import normalize_features
 
 
 def main() -> None:

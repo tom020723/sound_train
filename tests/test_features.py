@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import numpy as np
 
-from src.config import Config
-from src.features import extract_mfcc, split_fixed_clips
+from src.common.config import Config
+from src.features.librosa_mfcc import extract_mfcc, split_fixed_clips
 
 
 def test_split_fixed_clips_pads_short_audio() -> None:

@@ -5,8 +5,13 @@ import argparse
 import numpy as np
 import tensorflow as tf
 
-from src.config import load_config
-from src.features import extract_mfcc, load_audio, normalize_features, split_fixed_clips
+from src.common.config import load_config
+from src.features.librosa_mfcc import (
+    extract_mfcc,
+    load_audio,
+    normalize_features,
+    split_fixed_clips,
+)
 
 
 def main() -> None:
