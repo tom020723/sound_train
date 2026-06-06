@@ -12,11 +12,19 @@ def main() -> None:
     config = load_config()
     features: list[np.ndarray] = []
     labels: list[int] = []
+    
+    # 변경된 부분: 한 파일당 최대 추출 개수 제한 설정
+    MAX_CLIPS_PER_FILE = 30
 
     for label, class_name in enumerate(config.classes):
         for audio_path in iter_audio_files(config.data_dir / class_name):
             audio = load_audio(audio_path, config)
-            for clip in split_fixed_clips(audio, config.clip_samples):
+            
+            # 변경된 부분: enumerate를 사용해 클립 개수를 세면서 추출
+            for i, clip in enumerate(split_fixed_clips(audio, config.clip_samples)):
+                if i >= MAX_CLIPS_PER_FILE:
+                    break  # 30개를 채우면 더 이상 추출하지 않고 다음 파일로 넘어감
+                
                 features.append(extract_mfcc(clip, config))
                 labels.append(label)
 

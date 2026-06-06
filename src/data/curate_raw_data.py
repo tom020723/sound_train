@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import argparse
 import csv
+import random
 import shutil
+from collections import defaultdict
 from pathlib import Path
 
 from src.data.audio_files import iter_audio_files
@@ -32,6 +34,10 @@ def main() -> None:
         for class_name, source in DEFAULT_CLASS_SOURCES.items()
     }
 
+    # 재현성을 위해 랜덤 시드 고정 (매번 동일한 파일이 뽑히도록 설정)
+    random.seed(42)
+    TARGET_COUNT = 32
+
     manifest_rows: list[dict[str, str]] = []
     for class_name, source_dir in class_sources.items():
         if not source_dir.exists():
@@ -44,7 +50,31 @@ def main() -> None:
             for existing in iter_audio_files(target_dir):
                 existing.unlink()
 
-        for audio_path in iter_audio_files(source_dir):
+        # 1. 해당 소스 폴더의 모든 오디오 파일 목록을 먼저 수집
+        all_audio_paths = list(iter_audio_files(source_dir))
+        final_audio_paths = []
+
+        # 2. 비가 안 오는 소리(not_rain)이고 ESC-50인 경우에만 32개 제한 필터링 적용
+        if class_name == "not_rain":
+            groups = defaultdict(list)
+            for audio_path in all_audio_paths:
+                relative_parts = audio_path.relative_to(source_dir).parts
+                # 최상위 하위 폴더명을 그룹명으로 사용 (예: ESC-50_101_Clock)
+                group_name = relative_parts[0] if len(relative_parts) > 1 else "root"
+                groups[group_name].append(audio_path)
+
+            for group_name, paths in groups.items():
+                if "ESC-50" in group_name and len(paths) > TARGET_COUNT:
+                    # 무작위로 딱 32개만 샘플링
+                    sampled_paths = random.sample(paths, TARGET_COUNT)
+                    final_audio_paths.extend(sampled_paths)
+                else:
+                    final_audio_paths.extend(paths)
+        else:
+            final_audio_paths = all_audio_paths
+
+        # 3. 최종 선택된 파일들만 복사 및 manifest 등록
+        for audio_path in final_audio_paths:
             target_path = target_dir / safe_name(source_dir, audio_path)
             shutil.copy2(audio_path, target_path)
             manifest_rows.append(
@@ -63,9 +93,6 @@ def main() -> None:
         )
         writer.writeheader()
         writer.writerows(manifest_rows)
-
-    print(f"Copied {len(manifest_rows)} files into {args.data_dir}")
-    print(f"Saved manifest to {manifest_path}")
 
 
 if __name__ == "__main__":
