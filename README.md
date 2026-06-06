@@ -60,6 +60,9 @@ data/
 ### 1. 데이터 정리 및 자동 밸런싱 (Data Curation)
 `drive/`의 원본 데이터를 `data/raw/`로 복사합니다. 이때 `rain`과 `not_rain` 데이터의 균형(각각 1000개 클립)을 맞추기 위한 **자동 다운샘플링(필터링)**이 함께 수행됩니다.
 
+```powershell
+python -m src.data.curate_raw_data --clear
+
 # 1. 구글 드라이브 원본 복사 및 ESC-50 데이터 자동 필터링 (클래스당 32개)
 python -m src.data.curate_raw_data --clear
 
