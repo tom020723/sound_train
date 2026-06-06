@@ -61,8 +61,6 @@ data/
 `drive/`의 원본 데이터를 `data/raw/`로 복사합니다. 이때 `rain`과 `not_rain` 데이터의 균형(각각 1000개 클립)을 맞추기 위한 **자동 다운샘플링(필터링)**이 함께 수행됩니다.
 
 ```powershell
-python -m src.data.curate_raw_data --clear
-
 # 1. 구글 드라이브 원본 복사 및 ESC-50 데이터 자동 필터링 (클래스당 32개)
 python -m src.data.curate_raw_data --clear
 
@@ -80,6 +78,8 @@ python -m src.training.evaluate
 
 # 6. 학습/테스트 데이터 전체를 대상으로 오답 분석 (error_analysis/ 폴더에 시각화 저장)
 python -m src.training.analyze_errors
+```
+
 
 ## 학습 흐름
 
