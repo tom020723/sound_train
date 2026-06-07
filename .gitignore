@@ -23,17 +23,4 @@ models/*
 artifacts/
 drive/
 
-# STM32CubeIDE project: keep source/config, ignore generated and local files.
-Stm32/Debug/
-Stm32/Release/
-Stm32/*.launch
-
-# The full CMSIS-DSP checkout is large. Keep only headers needed to build the
-# copied MFCC source subset under Stm32/Core/Src/CMSIS_DSP_MFCC.
-Stm32/Middlewares/CMSIS-DSP/*
-Stm32/Middlewares/CMSIS-DSP/.git/
-!Stm32/Middlewares/CMSIS-DSP/Include/
-!Stm32/Middlewares/CMSIS-DSP/Include/**
-!Stm32/Middlewares/CMSIS-DSP/PrivateInclude/
-!Stm32/Middlewares/CMSIS-DSP/PrivateInclude/**
-!Stm32/Middlewares/CMSIS-DSP/LICENSE
+Stm32/
