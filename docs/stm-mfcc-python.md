@@ -1,24 +1,21 @@
-# STM MFCC Python 검증 도구
+# STM32 CMSIS-DSP MFCC 검증 정리
 
-이 문서는 STM32 CMSIS-DSP MFCC와 Python MFCC를 맞추기 위한 Python 쪽 도구 사용법을 정리합니다.
+이 문서는 Python에서 만든 MFCC 전처리와 STM32 보드에서 실행한 CMSIS-DSP `arm_mfcc_f32()` 결과를 맞춘 과정을 정리합니다.
 
-## 목적
+## 목표
 
-STM 보드에서 `arm_mfcc_f32`로 계산한 MFCC가 Python에서 계산한 MFCC와 같은지 확인하려면 같은 PCM 입력에 대한 결과를 숫자로 비교해야 합니다.
+비 소리 감지 모델을 STM32 TinyML 환경에서 사용하려면 학습 때 쓰는 MFCC와 보드에서 계산하는 MFCC가 같은 방식이어야 합니다.
 
-이번 브랜치에서는 먼저 Python 쪽에 아래 기능을 추가했습니다.
+이번 작업의 목표는 다음과 같습니다.
 
-- CMSIS-DSP에 가까운 MFCC 계수 생성
-- Python 기준 MFCC 계산
-- STM에 넣을 수 있는 `mfcc_params.h` 생성
-- golden PCM/MFCC 생성
-- STM 출력 CSV와 Python MFCC CSV 비교
+- Python에서 CMSIS-DSP와 같은 MFCC 파라미터 생성
+- golden PCM 입력과 Python MFCC 출력 생성
+- STM32F411RETx 보드에서 같은 PCM 입력으로 `arm_mfcc_f32()` 실행
+- UART 출력 결과를 Python golden 결과와 비교
 
-## 설정
+## 사용한 MFCC 설정
 
-MFCC 설정은 `configs/cmsis_mfcc.json`에서 관리합니다.
-
-현재 기본값:
+설정 파일은 `configs/cmsis_mfcc.json`입니다.
 
 ```text
 sample_rate: 16000
@@ -30,7 +27,46 @@ num_mfcc: 13
 window_type: hamming
 ```
 
-이 설정은 STM 쪽 `arm_mfcc_init_f32`에 들어갈 계수와 맞춰야 합니다.
+1초짜리 16 kHz PCM 입력을 사용하면 30 ms frame, 10 ms step 기준으로 총 98개 프레임이 생성됩니다.
+
+## STM32 쪽 구성
+
+STM32Cube F4 기본 패키지에 포함된 CMSIS-DSP는 오래된 버전이라 `arm_mfcc_f32()`가 없었습니다. 그래서 최신 CMSIS-DSP를 `Stm32/Middlewares/CMSIS-DSP`에 두고, Debug 빌드 설정에서 다음 include path를 사용하도록 맞췄습니다.
+
+```text
+../Middlewares/CMSIS-DSP/Include
+../Middlewares/CMSIS-DSP/PrivateInclude
+```
+
+보드 검증용으로 필요한 CMSIS-DSP 소스 파일은 `Stm32/Core/Src/CMSIS_DSP_MFCC` 아래에 추가했습니다.
+
+STM에서는 다음 파일들을 사용합니다.
+
+- `Stm32/Core/Inc/mfcc_params.h`: DCT, mel filter, window 계수
+- `Stm32/Core/Inc/mfcc_golden_pcm.h`: golden PCM 입력
+- `Stm32/Core/Src/mfcc_debug.c`: MFCC 계산 후 UART CSV 출력
+
+## Python 구현 수정
+
+처음 Python 구현은 일반적인 MFCC 방식에 가깝게 power spectrum을 사용했습니다.
+
+```text
+abs(FFT)^2 -> mel filter -> log(max(x, floor)) -> DCT
+```
+
+하지만 CMSIS-DSP `arm_mfcc_f32()`는 다음 흐름을 사용합니다.
+
+```text
+frame absmax normalize
+-> window
+-> FFT magnitude
+-> normalize scale 복원
+-> mel filter
+-> log(x + 1e-6)
+-> DCT
+```
+
+그래서 `src/features/cmsis_mfcc.py`를 CMSIS-DSP 흐름에 맞게 수정했습니다. 이 차이를 맞추기 전에는 cosine similarity는 높았지만 절대 오차가 컸고, 수정 후에는 보드 출력과 거의 동일하게 맞았습니다.
 
 ## Golden 데이터 생성
 
@@ -48,55 +84,60 @@ artifacts/mfcc_golden/
   mfcc_params.h
 ```
 
-현재 golden 입력은 1초, 16 kHz, int16 PCM입니다.
-
-현재 MFCC shape:
-
-```text
-(98, 13)
-```
-
-98 frame이 나오는 이유는 CMSIS-DSP 스타일로 center padding 없이 30 ms frame, 10 ms step을 사용하기 때문입니다.
-
-## MFCC 파라미터 헤더만 export
+STM용 PCM 헤더는 다음 명령으로 만들 수 있습니다.
 
 ```powershell
-python -m src.tools.export_mfcc_params --output artifacts/mfcc_params.h
+python -m src.tools.export_pcm_header --output Stm32/Core/Inc/mfcc_golden_pcm.h
 ```
 
-나중에 STM 프로젝트에 넣을 때는 출력 경로를 바꿔 사용할 수 있습니다.
+MFCC 파라미터 헤더는 다음 명령으로 만들 수 있습니다.
 
 ```powershell
 python -m src.tools.export_mfcc_params --output Stm32/Core/Inc/mfcc_params.h
 ```
 
-## STM 결과와 비교
+## 보드 출력 결과
 
-STM에서 같은 `input_pcm_i16.raw` 또는 동일한 C array를 입력으로 사용해 MFCC를 계산하고, 결과를 CSV로 저장합니다.
+보드에서 UART로 받은 결과는 [result.txt](../result.txt)에 저장했습니다.
 
-예상 형식:
+출력은 다음 형태입니다.
 
 ```text
-frame0_mfcc0,frame0_mfcc1,...,frame0_mfcc12
-frame1_mfcc0,frame1_mfcc1,...,frame1_mfcc12
-...
+MFCC_BEGIN
+<98 rows of 13 MFCC values>
+MFCC_END 98
 ```
+
+`MFCC_END 98`이 찍혔으므로 STM32에서 98개 프레임을 모두 처리한 것이 확인됩니다.
+
+## 비교 결과
 
 비교 명령:
 
 ```powershell
-python -m src.tools.compare_mfcc artifacts/mfcc_golden/python_mfcc.csv stm_mfcc.csv
+python -m src.tools.compare_mfcc artifacts/mfcc_golden/python_mfcc.csv result.txt
 ```
 
-출력 지표:
+결과:
 
-- `max_abs_error`
-- `mean_abs_error`
-- `rmse`
-- `cosine_similarity`
+```text
+shape: (98, 13)
+max_abs_error: 8.344650269e-06
+mean_abs_error: 1.710589572e-06
+rmse: 2.168050742e-06
+cosine_similarity: 0.999999940
+```
 
-처음에는 `arm_mfcc_f32` 기준으로 맞추는 것을 목표로 합니다. `q15`나 `q31`로 내려가는 것은 f32 결과가 맞은 뒤에 비교하는 편이 안전합니다.
+이 정도 오차는 float 연산과 출력 소수점 자릿수 차이 수준입니다. 따라서 현재 Python MFCC와 STM32 CMSIS-DSP MFCC는 같은 전처리로 맞춰진 상태라고 볼 수 있습니다.
 
-## 주의
+## 테스트
 
-현재 Python 구현은 CMSIS-DSP와 비교하기 위한 기준 구현입니다. 실제 STM 결과와 1차 비교를 해봐야 window, filterbank, log, DCT 스케일이 완전히 맞는지 판단할 수 있습니다.
+Python 테스트 결과:
+
+```text
+4 passed
+```
+
+## 다음 단계
+
+현재는 f32 MFCC 검증 단계입니다. 이후 모델 입력을 TinyML용 int8로 사용할 때는 f32 MFCC 결과에 대해 학습/추론에서 같은 quantization scale과 zero point를 적용해야 합니다. q15/q31 MFCC로 내려가는 것은 f32 기준 검증이 끝난 뒤에 비교하는 것이 안전합니다.

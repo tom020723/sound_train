@@ -183,10 +183,18 @@ def mfcc_frame(
     config = params.config
     fft_input = np.zeros(config.fft_length, dtype=np.float32)
     fft_input[: len(frame)] = frame[: config.frame_length]
+
+    max_value = np.max(np.abs(fft_input))
+    if max_value != 0.0:
+        fft_input *= np.float32(1.0 / max_value)
+
     fft_input *= params.window_coefs
 
-    power_spectrum = np.abs(np.fft.rfft(fft_input, n=config.fft_length)) ** 2
-    power_spectrum = power_spectrum.astype(np.float32)
+    magnitude_spectrum = np.abs(np.fft.rfft(fft_input, n=config.fft_length)).astype(
+        np.float32
+    )
+    if max_value != 0.0:
+        magnitude_spectrum *= np.float32(max_value)
 
     mel_energies = np.zeros(config.num_mel_filters, dtype=np.float32)
     offset = 0
@@ -194,11 +202,11 @@ def mfcc_frame(
         start = params.filter_pos[index]
         stop = offset + length
         coefs = params.filter_coefs[offset:stop]
-        bins = power_spectrum[start : start + length]
+        bins = magnitude_spectrum[start : start + length]
         mel_energies[index] = float(np.dot(coefs, bins))
         offset = stop
 
-    log_mel = np.log(np.maximum(mel_energies, config.log_floor)).astype(np.float32)
+    log_mel = np.log(mel_energies + 1.0e-6).astype(np.float32)
     return np.dot(params.dct_coefs, log_mel).astype(np.float32)
 
 

@@ -6,6 +6,22 @@ from pathlib import Path
 import numpy as np
 
 
+def load_numeric_csv(path: Path) -> np.ndarray:
+    rows: list[list[float]] = []
+    for raw_line in path.read_text(encoding="utf-8", errors="ignore").splitlines():
+        line = raw_line.strip()
+        if not line or "," not in line:
+            continue
+        try:
+            rows.append([float(value.strip()) for value in line.split(",")])
+        except ValueError:
+            continue
+
+    if not rows:
+        raise ValueError(f"No numeric CSV rows found in {path}")
+    return np.asarray(rows, dtype=np.float32)
+
+
 def cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:
     a_flat = a.reshape(-1)
     b_flat = b.reshape(-1)
@@ -21,8 +37,8 @@ def main() -> None:
     parser.add_argument("stm_mfcc", type=Path)
     args = parser.parse_args()
 
-    python_mfcc = np.loadtxt(args.python_mfcc, delimiter=",", dtype=np.float32)
-    stm_mfcc = np.loadtxt(args.stm_mfcc, delimiter=",", dtype=np.float32)
+    python_mfcc = load_numeric_csv(args.python_mfcc)
+    stm_mfcc = load_numeric_csv(args.stm_mfcc)
 
     if python_mfcc.shape != stm_mfcc.shape:
         raise ValueError(
