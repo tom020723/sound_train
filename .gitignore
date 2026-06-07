@@ -3,6 +3,7 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+pytest-cache-files-*/
 data/processed/
 !data/processed/.gitkeep
 data/raw/manifest.csv
@@ -17,4 +18,8 @@ data/raw/**/*.aiff
 !data/raw/not_rain/.gitkeep
 *.tflite
 *.keras
+models/*
+!models/.gitkeep
+artifacts/
 drive/
+Stm32/

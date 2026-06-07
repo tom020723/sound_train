@@ -1,0 +1,13 @@
+{
+  "sample_rate": 16000,
+  "frame_length": 480,
+  "frame_step": 160,
+  "fft_length": 512,
+  "num_mel_filters": 26,
+  "num_mfcc": 13,
+  "lower_frequency_hz": 20.0,
+  "upper_frequency_hz": 7600.0,
+  "window_type": "hamming",
+  "log_floor": 1e-12,
+  "dct_orthonormal": true
+}
