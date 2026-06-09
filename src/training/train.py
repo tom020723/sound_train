@@ -3,7 +3,6 @@ from __future__ import annotations
 import numpy as np
 
 from src.common.config import load_config
-from src.features.librosa_mfcc import normalize_features
 from src.models.cnn import build_model
 
 
@@ -11,10 +10,11 @@ def main() -> None:
     config = load_config()
     data = np.load(config.processed_dir / "dataset.npz", allow_pickle=True)
 
-    x_train = normalize_features(data["x_train"], data["mean"], data["std"])[..., None]
-    x_val = normalize_features(data["x_val"], data["mean"], data["std"])[..., None]
+    # 정규화 없이 raw CMSIS MFCC 값 사용 — BatchNorm이 내부 스케일을 처리
+    x_train = data["x_train"][..., None]
+    x_val   = data["x_val"][..., None]
     y_train = data["y_train"]
-    y_val = data["y_val"]
+    y_val   = data["y_val"]
 
     model = build_model(x_train.shape[1:], len(config.classes))
     model.fit(

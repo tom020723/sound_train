@@ -18,3 +18,11 @@ data/raw/**/*.aiff
 *.tflite
 *.keras
 drive/
+
+# STM32 - 자동생성 라이브러리 및 빌드 결과물 제외
+smart_window_system/Drivers/
+smart_window_system/Middlewares/
+smart_window_system/Debug/
+
+# 루트에 복사된 중복 파일
+audio_data.h

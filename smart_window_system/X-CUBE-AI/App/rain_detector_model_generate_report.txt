@@ -1,0 +1,273 @@
+Neural Network Tools for STM32AI v1.7.0 (STM.ai v8.0.0-19389)
+Created date          : 2026-06-07 22:16:02
+Parameters            : generate --name rain_detector_model -m C:/Users/samsung/GitHub/sound_train/models/rain_detector_int8.tflite --type tflite --compression none --verbosity 1 --workspace C:\Users\samsung\AppData\Local\Temp\mxAI_workspace9086401826872001698124126527615054 --output C:\Users\samsung\.stm32cubemx\rain_detector_model_output --allocate-inputs --series stm32f4 --allocate-outputs
+
+Exec/report summary (generate)
+--------------------------------------------------------------------------------------------------------------
+model file         :   C:\Users\samsung\GitHub\sound_train\models\rain_detector_int8.tflite                   
+type               :   tflite                                                                                 
+c_name             :   rain_detector_model                                                                    
+compression        :   none                                                                                   
+options            :   allocate-inputs, allocate-outputs                                                      
+optimization       :   balanced                                                                               
+target/series      :   stm32f4                                                                                
+workspace dir      :   C:\Users\samsung\AppData\Local\Temp\mxAI_workspace9086401826872001698124126527615054   
+output dir         :   C:\Users\samsung\.stm32cubemx\rain_detector_model_output                               
+model_fmt          :   ss/sa per-channel                                                                      
+model_name         :   rain_detector_int8                                                                     
+model_hash         :   b7f4f33ea301afd25e2c0cefc54fc491                                                       
+params #           :   1,914 items (2.20 KiB)                                                                 
+--------------------------------------------------------------------------------------------------------------
+input 1/1          :   'serving_default_input_layer0' (domain:activations/**default**)                        
+                   :   1313 items, 1.28 KiB, ai_i8, s=0.05892662, zp=-2, (1,101,13,1)                         
+output 1/1         :   'nl_12_0_conversion' (domain:activations/**default**)                                  
+                   :   2 items, 2 B, ai_i8, s=0.00390625, zp=-128, (1,1,1,2)                                  
+macc               :   1,321,192                                                                              
+weights (ro)       :   2,256 B (2.20 KiB) (1 segment) / -5,400(-70.5%) vs float model                         
+activations (rw)   :   36,340 B (35.49 KiB) (1 segment) *                                                     
+ram (total)        :   36,340 B (35.49 KiB) = 36,340 + 0 + 0                                                  
+--------------------------------------------------------------------------------------------------------------
+(*) 'input'/'output' buffers can be used from the activations buffer
+
+Model name - rain_detector_int8 ['serving_default_input_layer0'] ['nl_12_0_conversion']
+------ -------------------------------------------------------------------- ----------------------- ------------ --------- ---------------------------------------------------- --- --------------- ------------------- ---------------------------------- 
+m_id   layer (type,original)                                                oshape                  param/size        macc                                         connected to   | c_size          c_macc              c_type                             
+------ -------------------------------------------------------------------- ----------------------- ------------ --------- ---------------------------------------------------- --- --------------- ------------------- ---------------------------------- 
+0      serving_default_input_layer0 (Input, )                               [b:1,h:101,w:13,c:1]                                                                                  | +208(+100.0%)   +189,088(+100.0%)   conv2d_oi8[0]                      
+       conv2d_0 (Conv2D, CONV_2D)                                           [b:1,h:101,w:13,c:16]   160/208        189,088                         serving_default_input_layer0   | -208(-100.0%)   -189,088(-100.0%)   
+       nl_0_nl (Nonlinearity, CONV_2D)                                      [b:1,h:101,w:13,c:16]                   21,008                                             conv2d_0   |                 -21,008(-100.0%)    
+------ -------------------------------------------------------------------- ----------------------- ------------ --------- ---------------------------------------------------- --- --------------- ------------------- ---------------------------------- 
+1      functional_1_batch_normalization_1_batchnorm_mul (Placeholder, )     [b:None,c:16]           16/16                                                                         | -16(-100.0%)                        
+       eltwise_1 (Eltwise, MUL)                                             [b:1,h:101,w:13,c:16]                   21,008                                              nl_0_nl   |                 -21,008(-100.0%)    
+                                                                                                                               functional_1_batch_normalization_1_batchnorm_mul   | 
+------ -------------------------------------------------------------------- ----------------------- ------------ --------- ---------------------------------------------------- --- --------------- ------------------- ---------------------------------- 
+2      functional_1_batch_normalization_1_batchnorm_sub (Placeholder, )     [b:None,c:16]           16/16                                                                         | +16(+100.0%)    +42,016(+100.0%)    bn_oi8[1]                          
+       eltwise_2 (Eltwise, ADD)                                             [b:1,h:101,w:13,c:16]                   21,008                                            eltwise_1   |                 -21,008(-100.0%)    
+                                                                                                                               functional_1_batch_normalization_1_batchnorm_sub   | 
+------ -------------------------------------------------------------------- ----------------------- ------------ --------- ---------------------------------------------------- --- --------------- ------------------- ---------------------------------- 
+3      conv2d_3 (Conv2D, DEPTHWISE_CONV_2D)                                 [b:1,h:101,w:13,c:16]   160/208        189,088                                            eltwise_2   |                                     pad_oi8/conv2d_oi8[2, 3]           
+       nl_3_nl (Nonlinearity, DEPTHWISE_CONV_2D)                            [b:1,h:101,w:13,c:16]                   21,008                                             conv2d_3   |                 -21,008(-100.0%)    
+------ -------------------------------------------------------------------- ----------------------- ------------ --------- ---------------------------------------------------- --- --------------- ------------------- ---------------------------------- 
+4      conv2d_4 (Conv2D, CONV_2D)                                           [b:1,h:101,w:13,c:24]   408/480        504,216                                              nl_3_nl   |                                     conv2d_oi8[4]                      
+       nl_4_nl (Nonlinearity, CONV_2D)                                      [b:1,h:101,w:13,c:24]                   31,512                                             conv2d_4   |                 -31,512(-100.0%)    
+------ -------------------------------------------------------------------- ----------------------- ------------ --------- ---------------------------------------------------- --- --------------- ------------------- ---------------------------------- 
+5      functional_1_batch_normalization_1_2_batchnorm_mul (Placeholder, )   [b:None,c:24]           24/24                                                                         | -24(-100.0%)                        
+       eltwise_5 (Eltwise, MUL)                                             [b:1,h:101,w:13,c:24]                   31,512                                              nl_4_nl   |                 -31,512(-100.0%)    
+                                                                                                                             functional_1_batch_normalization_1_2_batchnorm_mul   | 
+------ -------------------------------------------------------------------- ----------------------- ------------ --------- ---------------------------------------------------- --- --------------- ------------------- ---------------------------------- 
+6      functional_1_batch_normalization_1_2_batchnorm_sub (Placeholder, )   [b:None,c:24]           24/24                                                                         | +24(+100.0%)    +63,024(+100.0%)    bn_oi8[5]                          
+       eltwise_6 (Eltwise, ADD)                                             [b:1,h:101,w:13,c:24]                   31,512                                            eltwise_5   |                 -31,512(-100.0%)    
+                                                                                                                             functional_1_batch_normalization_1_2_batchnorm_sub   | 
+------ -------------------------------------------------------------------- ----------------------- ------------ --------- ---------------------------------------------------- --- --------------- ------------------- ---------------------------------- 
+7      pool_7 (Pool, MAX_POOL_2D)                                           [b:1,h:50,w:6,c:24]                     28,800                                            eltwise_6   |                                     pool_oi8[6]                        
+------ -------------------------------------------------------------------- ----------------------- ------------ --------- ---------------------------------------------------- --- --------------- ------------------- ---------------------------------- 
+8      conv2d_8 (Conv2D, DEPTHWISE_CONV_2D)                                 [b:1,h:50,w:6,c:24]     240/312         64,824                                               pool_7   |                                     pad_oi8/conv2d_oi8[7, 8]           
+       nl_8_nl (Nonlinearity, DEPTHWISE_CONV_2D)                            [b:1,h:50,w:6,c:24]                      7,200                                             conv2d_8   |                 -7,200(-100.0%)     
+------ -------------------------------------------------------------------- ----------------------- ------------ --------- ---------------------------------------------------- --- --------------- ------------------- ---------------------------------- 
+9      conv2d_9 (Conv2D, CONV_2D)                                           [b:1,h:50,w:6,c:32]     800/896        230,432                                              nl_8_nl   |                                     conv2d_oi8[9]                      
+       nl_9_nl (Nonlinearity, CONV_2D)                                      [b:1,h:50,w:6,c:32]                      9,600                                             conv2d_9   |                 -9,600(-100.0%)     
+------ -------------------------------------------------------------------- ----------------------- ------------ --------- ---------------------------------------------------- --- --------------- ------------------- ---------------------------------- 
+10     pool_10 (Pool, MEAN)                                                 [b:1,h:1,w:1,c:32]                       9,600                                              nl_9_nl   |                                     pool_oi8[10]                       
+       reshape_10_reshape (Reshape, MEAN)                                   [b:1,c:32]                                                                                  pool_10   |                                     
+------ -------------------------------------------------------------------- ----------------------- ------------ --------- ---------------------------------------------------- --- --------------- ------------------- ---------------------------------- 
+11     dense_11 (Dense, FULLY_CONNECTED)                                    [b:1,c:2]               66/72               66                                   reshape_10_reshape   |                 +4(+6.1%)           dense_oi8/converter_of32[11, 12]   
+------ -------------------------------------------------------------------- ----------------------- ------------ --------- ---------------------------------------------------- --- --------------- ------------------- ---------------------------------- 
+12     nl_12 (Nonlinearity, SOFTMAX)                                        [b:1,c:2]                                   30                                             dense_11   |                 +4(+13.3%)          nl_of32/converter_oi8[o][13, 14]   
+------ -------------------------------------------------------------------- ----------------------- ------------ --------- ---------------------------------------------------- --- --------------- ------------------- ---------------------------------- 
+model/c-model: macc=1,411,512/1,321,192 -90,320(-6.4%) weights=2,256/2,256  activations=--/36,340 io=--/0
+
+
+
+Generated C-graph summary
+------------------------------------------------------------------------------------------------------------------------
+model name            : rain_detector_int8
+c-name                : rain_detector_model
+c-node #              : 15
+c-array #             : 40
+activations size      : 36340 (1 segment)
+weights size          : 2256 (1 segment)
+macc                  : 1321192
+inputs                : ['serving_default_input_layer0_output']
+outputs               : ['nl_12_0_conversion_output']
+
+C-Arrays (40)
+------ ------------------------------------- ------------- ------------------------- --------------- ------------- --------- 
+c_id   name (*_array)                        item/size     domain/mem-pool           c-type          fmt           comment   
+------ ------------------------------------- ------------- ------------------------- --------------- ------------- --------- 
+0      eltwise_2_scratch0                    160/160       activations/**default**   uint8_t         u8                      
+1      conv2d_3_scratch0                     593/593       activations/**default**   int8_t          s8                      
+2      conv2d_4_scratch0                     304/304       activations/**default**   int8_t          s8                      
+3      serving_default_input_layer0_output   1313/1313     activations/**default**   int8_t          sa8           /input    
+4      eltwise_6_scratch0                    240/240       activations/**default**   uint8_t         u8                      
+5      conv2d_0_output                       21008/21008   activations/**default**   int8_t          sa8                     
+6      eltwise_2_output                      21008/21008   activations/**default**   int8_t          sa8                     
+7      conv2d_8_scratch0                     889/889       activations/**default**   int8_t          s8                      
+8      conv2d_3_pad_before_output            24720/24720   activations/**default**   int8_t          sa8                     
+9      conv2d_3_output                       21008/21008   activations/**default**   int8_t          sa8                     
+10     conv2d_4_output                       31512/31512   activations/**default**   int8_t          sa8                     
+11     conv2d_9_scratch0                     416/416       activations/**default**   int8_t          s8                      
+12     eltwise_6_output                      31512/31512   activations/**default**   int8_t          sa8                     
+13     pool_7_output                         7200/7200     activations/**default**   int8_t          sa8                     
+14     dense_11_scratch0                     42/84         activations/**default**   int16_t         s16                     
+15     conv2d_8_pad_before_output            9984/9984     activations/**default**   int8_t          sa8                     
+16     conv2d_8_output                       7200/7200     activations/**default**   int8_t          sa8                     
+17     conv2d_9_output                       9600/9600     activations/**default**   int8_t          sa8                     
+18     pool_10_output                        32/32         activations/**default**   int8_t          sa8                     
+19     dense_11_output                       2/2           activations/**default**   int8_t          sa8                     
+20     dense_11_0_conversion_output          2/8           activations/**default**   float           float32                 
+21     nl_12_output                          2/8           activations/**default**   float           float32                 
+22     nl_12_0_conversion_output             2/2           activations/**default**   int8_t          sa8           /output   
+23     conv2d_0_weights                      144/144       weights/weights           const int8_t    ss8/ch(16)              
+24     conv2d_0_bias                         16/64         weights/weights           const int32_t   ss32/ch(16)             
+25     eltwise_2_scale                       16/16         weights/weights           const int8_t    sa8                     
+26     eltwise_2_bias                        16/16         weights/weights           const int8_t    sa8                     
+27     conv2d_3_weights                      144/144       weights/weights           const int8_t    ss8/ch(16)              
+28     conv2d_3_bias                         16/64         weights/weights           const int32_t   ss32/ch(16)             
+29     conv2d_4_weights                      384/384       weights/weights           const int8_t    ss8/ch(24)              
+30     conv2d_4_bias                         24/96         weights/weights           const int32_t   ss32/ch(24)             
+31     eltwise_6_scale                       24/24         weights/weights           const int8_t    sa8                     
+32     eltwise_6_bias                        24/24         weights/weights           const int8_t    sa8                     
+33     conv2d_8_weights                      216/216       weights/weights           const int8_t    ss8/ch(24)              
+34     conv2d_8_bias                         24/96         weights/weights           const int32_t   ss32/ch(24)             
+35     conv2d_9_weights                      768/768       weights/weights           const int8_t    ss8/ch(32)              
+36     conv2d_9_bias                         32/128        weights/weights           const int32_t   ss32/ch(32)             
+37     dense_11_weights                      64/64         weights/weights           const int8_t    ss8/ch(2)               
+38     dense_11_bias                         2/8           weights/weights           const int32_t   ss32/ch(2)              
+39     conv2d_0_scratch0                     484/484       activations/**default**   int8_t          s8                      
+------ ------------------------------------- ------------- ------------------------- --------------- ------------- --------- 
+
+C-Layers (15)
+------ ----------------------- ---- ------------ -------- ----- ---------------------------------------- -------------------- 
+c_id   name (*_layer)          id   layer_type   macc     rom   tensors                                  shape (array id)     
+------ ----------------------- ---- ------------ -------- ----- ---------------------------------------- -------------------- 
+0      conv2d_0                0    conv2d       189088   208   I: serving_default_input_layer0_output   (1,101,13,1) (3)     
+                                                                S: conv2d_0_scratch0                                          
+                                                                W: conv2d_0_weights                      (1,16,3,3) (23)      
+                                                                W: conv2d_0_bias                         (1,1,1,16) (24)      
+                                                                O: conv2d_0_output                       (1,101,13,16) (5)    
+------ ----------------------- ---- ------------ -------- ----- ---------------------------------------- -------------------- 
+1      eltwise_2               2    bn           42016    32    I: conv2d_0_output                       (1,101,13,16) (5)    
+                                                                S: eltwise_2_scratch0                                         
+                                                                W: eltwise_2_scale                       (1,1,1,16) (25)      
+                                                                W: eltwise_2_bias                        (1,1,1,16) (26)      
+                                                                O: eltwise_2_output                      (1,101,13,16) (6)    
+------ ----------------------- ---- ------------ -------- ----- ---------------------------------------- -------------------- 
+2      conv2d_3_pad_before     3    pad          0        0     I: eltwise_2_output                      (1,101,13,16) (6)    
+                                                                O: conv2d_3_pad_before_output            (1,103,15,16) (8)    
+------ ----------------------- ---- ------------ -------- ----- ---------------------------------------- -------------------- 
+3      conv2d_3                3    conv2d       189088   208   I: conv2d_3_pad_before_output            (1,103,15,16) (8)    
+                                                                S: conv2d_3_scratch0                                          
+                                                                W: conv2d_3_weights                      (16,1,3,3) (27)      
+                                                                W: conv2d_3_bias                         (1,1,1,16) (28)      
+                                                                O: conv2d_3_output                       (1,101,13,16) (9)    
+------ ----------------------- ---- ------------ -------- ----- ---------------------------------------- -------------------- 
+4      conv2d_4                4    conv2d       504216   480   I: conv2d_3_output                       (1,101,13,16) (9)    
+                                                                S: conv2d_4_scratch0                                          
+                                                                W: conv2d_4_weights                      (16,24,1,1) (29)     
+                                                                W: conv2d_4_bias                         (1,1,1,24) (30)      
+                                                                O: conv2d_4_output                       (1,101,13,24) (10)   
+------ ----------------------- ---- ------------ -------- ----- ---------------------------------------- -------------------- 
+5      eltwise_6               6    bn           63024    48    I: conv2d_4_output                       (1,101,13,24) (10)   
+                                                                S: eltwise_6_scratch0                                         
+                                                                W: eltwise_6_scale                       (1,1,1,24) (31)      
+                                                                W: eltwise_6_bias                        (1,1,1,24) (32)      
+                                                                O: eltwise_6_output                      (1,101,13,24) (12)   
+------ ----------------------- ---- ------------ -------- ----- ---------------------------------------- -------------------- 
+6      pool_7                  7    pool         28800    0     I: eltwise_6_output                      (1,101,13,24) (12)   
+                                                                O: pool_7_output                         (1,50,6,24) (13)     
+------ ----------------------- ---- ------------ -------- ----- ---------------------------------------- -------------------- 
+7      conv2d_8_pad_before     8    pad          0        0     I: pool_7_output                         (1,50,6,24) (13)     
+                                                                O: conv2d_8_pad_before_output            (1,52,8,24) (15)     
+------ ----------------------- ---- ------------ -------- ----- ---------------------------------------- -------------------- 
+8      conv2d_8                8    conv2d       64824    312   I: conv2d_8_pad_before_output            (1,52,8,24) (15)     
+                                                                S: conv2d_8_scratch0                                          
+                                                                W: conv2d_8_weights                      (24,1,3,3) (33)      
+                                                                W: conv2d_8_bias                         (1,1,1,24) (34)      
+                                                                O: conv2d_8_output                       (1,50,6,24) (16)     
+------ ----------------------- ---- ------------ -------- ----- ---------------------------------------- -------------------- 
+9      conv2d_9                9    conv2d       230432   896   I: conv2d_8_output                       (1,50,6,24) (16)     
+                                                                S: conv2d_9_scratch0                                          
+                                                                W: conv2d_9_weights                      (24,32,1,1) (35)     
+                                                                W: conv2d_9_bias                         (1,1,1,32) (36)      
+                                                                O: conv2d_9_output                       (1,50,6,32) (17)     
+------ ----------------------- ---- ------------ -------- ----- ---------------------------------------- -------------------- 
+10     pool_10                 10   pool         9600     0     I: conv2d_9_output                       (1,50,6,32) (17)     
+                                                                O: pool_10_output                        (1,1,1,32) (18)      
+------ ----------------------- ---- ------------ -------- ----- ---------------------------------------- -------------------- 
+11     dense_11                11   dense        66       72    I: pool_10_output                        (1,1,1,32) (18)      
+                                                                S: dense_11_scratch0                                          
+                                                                W: dense_11_weights                      (32,1,1,2) (37)      
+                                                                W: dense_11_bias                         (1,1,1,2) (38)       
+                                                                O: dense_11_output                       (1,1,1,2) (19)       
+------ ----------------------- ---- ------------ -------- ----- ---------------------------------------- -------------------- 
+12     dense_11_0_conversion   11   converter    4        0     I: dense_11_output                       (1,1,1,2) (19)       
+                                                                O: dense_11_0_conversion_output          (1,1,1,2) (20)       
+------ ----------------------- ---- ------------ -------- ----- ---------------------------------------- -------------------- 
+13     nl_12                   12   nl           30       0     I: dense_11_0_conversion_output          (1,1,1,2) (20)       
+                                                                O: nl_12_output                          (1,1,1,2) (21)       
+------ ----------------------- ---- ------------ -------- ----- ---------------------------------------- -------------------- 
+14     nl_12_0_conversion      12   converter    4        0     I: nl_12_output                          (1,1,1,2) (21)       
+                                                                O: nl_12_0_conversion_output             (1,1,1,2) (22)       
+------ ----------------------- ---- ------------ -------- ----- ---------------------------------------- -------------------- 
+
+
+
+Number of operations per c-layer
+------- ------ ----------------------------------- ----------- ------------- -------- ---------- 
+c_id    m_id   name (type)                                 #op          type   #param   sparsity 
+------- ------ ----------------------------------- ----------- ------------- -------- ---------- 
+0       0      conv2d_0 (conv2d)                       189,088    smul_s8_s8      160     0.0000 
+1       2      eltwise_2 (bn)                           42,016    smul_s8_s8       32     0.0000 
+2       3      conv2d_3_pad_before (pad)                     0    smul_s8_s8          
+3       3      conv2d_3 (conv2d)                       189,088    smul_s8_s8      160     0.0000 
+4       4      conv2d_4 (conv2d)                       504,216    smul_s8_s8      408     0.0123 
+5       6      eltwise_6 (bn)                           63,024    smul_s8_s8       48     0.0000 
+6       7      pool_7 (pool)                            28,800      op_s8_s8          
+7       8      conv2d_8_pad_before (pad)                     0    smul_s8_s8          
+8       8      conv2d_8 (conv2d)                        64,824    smul_s8_s8      240     0.0125 
+9       9      conv2d_9 (conv2d)                       230,432    smul_s8_s8      800     0.0050 
+10      10     pool_10 (pool)                            9,600      op_s8_s8          
+11      11     dense_11 (dense)                             66    smul_s8_s8       66     0.0000 
+12      11     dense_11_0_conversion (converter)             4   smul_s8_f32          
+13      12     nl_12 (nl)                                   30    op_f32_f32          
+14      12     nl_12_0_conversion (converter)                4   smul_f32_s8          
+------- ------ ----------------------------------- ----------- ------------- -------- ---------- 
+total                                                1,321,192                  1,914     0.0063 
+
+Number of operation types
+---------------- ----------- ----------- 
+operation type             #           % 
+---------------- ----------- ----------- 
+smul_s8_s8         1,282,754       97.1% 
+op_s8_s8              38,400        2.9% 
+smul_s8_f32                4        0.0% 
+op_f32_f32                30        0.0% 
+smul_f32_s8                4        0.0% 
+
+Complexity report (model)
+------ ---------------------------------------------------- ------------------------- ------------------------- ---------- 
+m_id   name                                                 c_macc                    c_rom                     c_id       
+------ ---------------------------------------------------- ------------------------- ------------------------- ---------- 
+0      serving_default_input_layer0                         ||||||            14.3%   ||||               9.2%   [0]        
+2      functional_1_batch_normalization_1_batchnorm_sub     ||                 3.2%   |                  1.4%   [1]        
+3      conv2d_3                                             ||||||            14.3%   ||||               9.2%   [2, 3]     
+4      conv2d_4                                             ||||||||||||||||  38.2%   |||||||||         21.3%   [4]        
+6      functional_1_batch_normalization_1_2_batchnorm_sub   ||                 4.8%   |                  2.1%   [5]        
+7      pool_7                                               |                  2.2%   |                  0.0%   [6]        
+8      conv2d_8                                             ||                 4.9%   ||||||            13.8%   [7, 8]     
+9      conv2d_9                                             |||||||           17.4%   ||||||||||||||||  39.7%   [9]        
+10     pool_10                                              |                  0.7%   |                  0.0%   [10]       
+11     dense_11                                             |                  0.0%   ||                 3.2%   [11, 12]   
+12     nl_12                                                |                  0.0%   |                  0.0%   [13, 14]   
+------ ---------------------------------------------------- ------------------------- ------------------------- ---------- 
+macc=1,321,192 weights=2,256 act=36,340 ram_io=0
+
+Generated files (7)
+-------------------------------------------------------------------------------------------- 
+C:\Users\samsung\.stm32cubemx\rain_detector_model_output\rain_detector_model_config.h        
+C:\Users\samsung\.stm32cubemx\rain_detector_model_output\rain_detector_model.h               
+C:\Users\samsung\.stm32cubemx\rain_detector_model_output\rain_detector_model.c               
+C:\Users\samsung\.stm32cubemx\rain_detector_model_output\rain_detector_model_data_params.h   
+C:\Users\samsung\.stm32cubemx\rain_detector_model_output\rain_detector_model_data_params.c   
+C:\Users\samsung\.stm32cubemx\rain_detector_model_output\rain_detector_model_data.h          
+C:\Users\samsung\.stm32cubemx\rain_detector_model_output\rain_detector_model_data.c          
