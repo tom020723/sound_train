@@ -3,10 +3,6 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
-pytest-cache-files-*/
-
-# Dataset inputs and generated datasets
-drive/
 data/processed/
 !data/processed/.gitkeep
 data/raw/manifest.csv
@@ -19,19 +15,20 @@ data/raw/**/*.aif
 data/raw/**/*.aiff
 !data/raw/rain/.gitkeep
 !data/raw/not_rain/.gitkeep
-
-# Training and export artifacts
-artifacts/
-models/*
-!models/.gitkeep
-!models/*_int8.h
-*.keras
 *.tflite
+*.keras
+drive/
 
 # External or nested project copies should not live in this repo
-smart_window_system/
 sound_train-feature-stm-mfcc/
 Stm32/
+
+# STM32 build artifacts and external libraries (track project source only)
+smart_window_system/Debug/
+smart_window_system/Drivers/
+smart_window_system/Middlewares/
+smart_window_system/Core/Src/CMSIS_DSP/
+smart_window_system/Core/Src/dsp_lib/
 
 # Generated C headers copied during experiments
 audio_data.h
