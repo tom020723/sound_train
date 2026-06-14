@@ -2,7 +2,7 @@
   ******************************************************************************
   * @file    rain_detector_model.h
   * @author  AST Embedded Analytics Research Platform
-  * @date    Sun Jun  7 22:16:02 2026
+  * @date    Sun Jun 14 01:37:47 2026
   * @brief   AI Tool Automatic Code Generator for Embedded NN computing
   ******************************************************************************
   * @attention
@@ -45,11 +45,11 @@ AI_DEPRECATED
 #define AI_RAIN_DETECTOR_MODEL_IN_SIZE_BYTES { \
   AI_RAIN_DETECTOR_MODEL_IN_1_SIZE_BYTES, \
 }
-#define AI_RAIN_DETECTOR_MODEL_IN_1_HEIGHT      (101)
+#define AI_RAIN_DETECTOR_MODEL_IN_1_HEIGHT      (98)
 #define AI_RAIN_DETECTOR_MODEL_IN_1_WIDTH       (13)
 #define AI_RAIN_DETECTOR_MODEL_IN_1_CHANNEL     (1)
-#define AI_RAIN_DETECTOR_MODEL_IN_1_SIZE        (101 * 13 * 1)
-#define AI_RAIN_DETECTOR_MODEL_IN_1_SIZE_BYTES  (1313)
+#define AI_RAIN_DETECTOR_MODEL_IN_1_SIZE        (98 * 13 * 1)
+#define AI_RAIN_DETECTOR_MODEL_IN_1_SIZE_BYTES  (1274)
 
 /******************************************************************************/
 #define AI_RAIN_DETECTOR_MODEL_OUT_NUM       (1)
@@ -69,7 +69,7 @@ AI_DEPRECATED
 #define AI_RAIN_DETECTOR_MODEL_OUT_1_SIZE_BYTES  (2)
 
 /******************************************************************************/
-#define AI_RAIN_DETECTOR_MODEL_N_NODES (15)
+#define AI_RAIN_DETECTOR_MODEL_N_NODES (13)
 
 
 AI_API_DECLARE_BEGIN

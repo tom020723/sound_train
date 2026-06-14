@@ -199,7 +199,7 @@ void AI_Run_Microphone_Inference(int8_t* mic_data, int8_t* out_not_rain, int8_t*
     ai_i8* in_ptr = (ai_i8*)(*(uintptr_t*)data_ins);
     ai_i8* out_ptr = (ai_i8*)(*(uintptr_t*)data_outs);
 
-    for(int i = 0; i < 1313; i++) {
+    for(int i = 0; i < AI_RAIN_DETECTOR_MODEL_IN_1_SIZE_BYTES; i++) {
         in_ptr[i] = mic_data[i];
     }
 

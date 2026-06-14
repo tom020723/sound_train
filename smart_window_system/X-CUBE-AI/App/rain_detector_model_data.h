@@ -2,7 +2,7 @@
   ******************************************************************************
   * @file    rain_detector_model_data.h
   * @author  AST Embedded Analytics Research Platform
-  * @date    Sun Jun  7 22:16:02 2026
+  * @date    Sun Jun 14 01:37:47 2026
   * @brief   AI Tool Automatic Code Generator for Embedded NN computing
   ******************************************************************************
   * Copyright (c) 2026 STMicroelectronics.
@@ -33,7 +33,7 @@ AI_DEPRECATED
 AI_API_DECLARE_BEGIN
 
 
-extern const ai_u64 s_rain_detector_model_weights_array_u64[282];
+extern const ai_u64 s_rain_detector_model_weights_array_u64[272];
 
 
 

@@ -2,7 +2,7 @@
   ******************************************************************************
   * @file    rain_detector_model_data.c
   * @author  AST Embedded Analytics Research Platform
-  * @date    Sun Jun  7 22:16:02 2026
+  * @date    Sun Jun 14 01:37:47 2026
   * @brief   AI Tool Automatic Code Generator for Embedded NN computing
   ******************************************************************************
   * @attention
@@ -21,13 +21,13 @@
 AI_API_DECLARE_BEGIN
 ai_buffer g_rain_detector_model_data_map_activations[AI_RAIN_DETECTOR_MODEL_DATA_ACTIVATIONS_COUNT] = {
   AI_BUFFER_INIT(AI_FLAG_NONE,  AI_BUFFER_FORMAT_U8,
-    AI_BUFFER_SHAPE_INIT(AI_SHAPE_BCWH, 4, 1, 36340, 1, 1),
-    36340, NULL, NULL),    /* heap_overlay_pool */
+    AI_BUFFER_SHAPE_INIT(AI_SHAPE_BCWH, 4, 1, 35308, 1, 1),
+    35308, NULL, NULL),    /* heap_overlay_pool */
   };
 ai_buffer g_rain_detector_model_data_map_weights[AI_RAIN_DETECTOR_MODEL_DATA_WEIGHTS_COUNT] = {
   AI_BUFFER_INIT(AI_FLAG_NONE,  AI_BUFFER_FORMAT_U8,
-    AI_BUFFER_SHAPE_INIT(AI_SHAPE_BCWH, 4, 1, 2256, 1, 1),
-    2256, NULL, s_rain_detector_model_weights_array_u64),   /* weights_array */
+    AI_BUFFER_SHAPE_INIT(AI_SHAPE_BCWH, 4, 1, 2176, 1, 1),
+    2176, NULL, s_rain_detector_model_weights_array_u64),   /* weights_array */
   };
 
 

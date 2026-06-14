@@ -19,10 +19,16 @@ data/raw/**/*.aiff
 *.keras
 drive/
 
-# STM32 - 자동생성 라이브러리 및 빌드 결과물 제외
+# External or nested project copies should not live in this repo
+sound_train-feature-stm-mfcc/
+Stm32/
+
+# STM32 build artifacts and external libraries (track project source only)
+smart_window_system/Debug/
 smart_window_system/Drivers/
 smart_window_system/Middlewares/
-smart_window_system/Debug/
+smart_window_system/Core/Src/CMSIS_DSP/
+smart_window_system/Core/Src/dsp_lib/
 
-# 루트에 복사된 중복 파일
+# Generated C headers copied during experiments
 audio_data.h
