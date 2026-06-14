@@ -1,0 +1,39 @@
+.venv/
+.tmp/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+pytest-cache-files-*/
+data/processed/
+!data/processed/.gitkeep
+data/raw/manifest.csv
+data/raw/**/*.wav
+data/raw/**/*.mp3
+data/raw/**/*.flac
+data/raw/**/*.ogg
+data/raw/**/*.m4a
+data/raw/**/*.aif
+data/raw/**/*.aiff
+!data/raw/rain/.gitkeep
+!data/raw/not_rain/.gitkeep
+*.tflite
+*.keras
+models/*
+!models/.gitkeep
+artifacts/
+drive/
+
+# STM32CubeIDE project: keep source/config, ignore generated and local files.
+Stm32/Debug/
+Stm32/Release/
+Stm32/*.launch
+
+# The full CMSIS-DSP checkout is large. Keep only headers needed to build the
+# copied MFCC source subset under Stm32/Core/Src/CMSIS_DSP_MFCC.
+Stm32/Middlewares/CMSIS-DSP/*
+Stm32/Middlewares/CMSIS-DSP/.git/
+!Stm32/Middlewares/CMSIS-DSP/Include/
+!Stm32/Middlewares/CMSIS-DSP/Include/**
+!Stm32/Middlewares/CMSIS-DSP/PrivateInclude/
+!Stm32/Middlewares/CMSIS-DSP/PrivateInclude/**
+!Stm32/Middlewares/CMSIS-DSP/LICENSE
