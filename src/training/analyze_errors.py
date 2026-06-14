@@ -6,7 +6,8 @@ from pathlib import Path
 
 from src.common.config import load_config
 from src.data.audio_files import iter_audio_files
-from src.features.librosa_mfcc import load_audio, split_fixed_clips, extract_mfcc, normalize_features
+from src.features.cmsis_mfcc import build_mfcc_params, load_cmsis_mfcc_config, mfcc as cmsis_mfcc
+from src.features.librosa_mfcc import load_audio, split_fixed_clips
 
 def plot_and_save_mfcc(mfcc_data, title, save_path):
     plt.figure(figsize=(10, 4))
@@ -19,10 +20,8 @@ def plot_and_save_mfcc(mfcc_data, title, save_path):
 
 def main():
     config = load_config()
+    cmsis_params = build_mfcc_params(load_cmsis_mfcc_config("configs/cmsis_mfcc.json"))
     model = tf.keras.models.load_model(config.model_dir / "rain_detector.keras")
-    
-    data = np.load(config.processed_dir / "dataset.npz", allow_pickle=True)
-    mean, std = data["mean"], data["std"]
 
     error_dir = Path("error_analysis")
     error_dir.mkdir(exist_ok=True)
@@ -41,10 +40,9 @@ def main():
             clips = list(split_fixed_clips(audio, config.clip_samples))
             
             for clip_idx, clip in enumerate(clips):
-                mfcc = extract_mfcc(clip, config)
-                norm_mfcc = normalize_features(np.array([mfcc]), mean, std)[0]
+                mfcc = cmsis_mfcc(clip.astype(np.float32), cmsis_params)
                 
-                pred_probs = model.predict(norm_mfcc[None, ..., None], verbose=0)
+                pred_probs = model.predict(mfcc[None, ..., None], verbose=0)
                 pred_label_idx = pred_probs.argmax(axis=1)[0]
                 
                 if pred_label_idx != true_label_idx:

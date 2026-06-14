@@ -5,16 +5,19 @@ import numpy as np
 import tensorflow as tf
 
 from src.common.config import load_config
+from src.features.cmsis_mfcc import (
+    build_mfcc_params,
+    load_cmsis_mfcc_config,
+    mfcc as cmsis_mfcc,
+)
 from src.features.librosa_mfcc import (
-    extract_mfcc,
     load_audio,
-    normalize_features,
     split_fixed_clips,
 )
 
 def main() -> None:
     config = load_config()
-    data = np.load(config.processed_dir / "dataset.npz", allow_pickle=True)
+    cmsis_params = build_mfcc_params(load_cmsis_mfcc_config("configs/cmsis_mfcc.json"))
     
     # 1. 🚀 원본 Keras 모델과 양자화 TFLite 모델 동시 로드
     keras_model_path = config.model_dir / "rain_detector.keras"
@@ -79,8 +82,8 @@ def main() -> None:
             continue
 
         # MFCC 및 정규화 진행 (Float32 입력 데이터 생성)
-        features = np.stack([extract_mfcc(clip, config) for clip in clips])
-        x_float = normalize_features(features, data["mean"], data["std"])[..., None]
+        features = np.stack([cmsis_mfcc(clip.astype(np.float32), cmsis_params) for clip in clips])
+        x_float = features[..., None]
 
         print(f"   🔎 [정규화 검사] 모델 입력값 x의 최댓값: {np.max(x_float):.4f}, 최솟값: {np.min(x_float):.4f}")
 

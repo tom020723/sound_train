@@ -10,7 +10,7 @@ def main() -> None:
     config = load_config()
     data = np.load(config.processed_dir / "dataset.npz", allow_pickle=True)
 
-    # 정규화 없이 raw CMSIS MFCC 값 사용 — BatchNorm이 내부 스케일을 처리
+    # Raw CMSIS-style MFCC values are used so training/export/inference share the same input scale.
     x_train = data["x_train"][..., None]
     x_val   = data["x_val"][..., None]
     y_train = data["y_train"]

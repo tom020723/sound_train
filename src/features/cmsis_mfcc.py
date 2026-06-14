@@ -206,7 +206,7 @@ def mfcc_frame(
         mel_energies[index] = float(np.dot(coefs, bins))
         offset = stop
 
-    log_mel = np.log(mel_energies + 1.0e-6).astype(np.float32)
+    log_mel = np.log(np.maximum(mel_energies, config.log_floor)).astype(np.float32)
     return np.dot(params.dct_coefs, log_mel).astype(np.float32)
 
 
