@@ -51,7 +51,13 @@ def main() -> None:
                 existing.unlink()
 
         # 1. 해당 소스 폴더의 모든 오디오 파일 목록을 먼저 수집
-        all_audio_paths = list(iter_audio_files(source_dir))
+        all_audio_paths = []
+        for audio_path in iter_audio_files(source_dir):
+            # 📌 [안전장치 추가]: 경로에 'test_data'가 들어가 있다면 학습 데이터셋 수집에서 완전히 제외합니다.
+            if "test_data" in audio_path.parts:
+                continue
+            all_audio_paths.append(audio_path)
+            
         final_audio_paths = []
 
         # 2. 비가 안 오는 소리(not_rain)이고 ESC-50인 경우에만 32개 제한 필터링 적용

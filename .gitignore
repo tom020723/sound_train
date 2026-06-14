@@ -3,6 +3,10 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+pytest-cache-files-*/
+
+# Dataset inputs and generated datasets
+drive/
 data/processed/
 !data/processed/.gitkeep
 data/raw/manifest.csv
@@ -15,6 +19,19 @@ data/raw/**/*.aif
 data/raw/**/*.aiff
 !data/raw/rain/.gitkeep
 !data/raw/not_rain/.gitkeep
-*.tflite
+
+# Training and export artifacts
+artifacts/
+models/*
+!models/.gitkeep
+!models/*_int8.h
 *.keras
-drive/
+*.tflite
+
+# External or nested project copies should not live in this repo
+smart_window_system/
+sound_train-feature-stm-mfcc/
+Stm32/
+
+# Generated C headers copied during experiments
+audio_data.h

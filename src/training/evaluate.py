@@ -5,7 +5,6 @@ import tensorflow as tf
 from sklearn.metrics import classification_report, confusion_matrix
 
 from src.common.config import load_config
-from src.features.librosa_mfcc import normalize_features
 
 
 def main() -> None:
@@ -13,7 +12,7 @@ def main() -> None:
     data = np.load(config.processed_dir / "dataset.npz", allow_pickle=True)
     model = tf.keras.models.load_model(config.model_dir / "rain_detector.keras")
 
-    x_test = normalize_features(data["x_test"], data["mean"], data["std"])[..., None]
+    x_test = data["x_test"][..., None]
     y_test = data["y_test"]
     y_pred = model.predict(x_test).argmax(axis=1)
 
