@@ -21,7 +21,7 @@ def main() -> None:
 
     for label, class_name in enumerate(config.classes):
         for audio_path in iter_audio_files(config.data_dir / class_name):
-            audio = load_audio(audio_path, config)  # float32 [-1, 1]
+            audio = load_audio(audio_path, config)
 
             for i, clip in enumerate(split_fixed_clips(audio, config.clip_samples)):
                 if i >= MAX_CLIPS_PER_FILE:

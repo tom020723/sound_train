@@ -32,3 +32,4 @@ smart_window_system/Core/Src/dsp_lib/
 
 # Generated C headers copied during experiments
 audio_data.h
+.claude/
